@@ -1,0 +1,18 @@
+config {
+    type: 'incremental',
+    schema: 'managed',
+    name: 'TL_vendas_incremental',
+    tags: ['inicial', 'incremental'],
+    dependencies: ['TL_ext_vendas'],
+}
+
+
+SELECT *
+FROM ${ref('TL_ext_vendas')} cl
+
+
+${
+    when(incremental(), 
+    `WHERE pedido_data > (SELECT MAX(pedido_data) FROM ${self()})`) 
+}
+
